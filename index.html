@@ -151,7 +151,17 @@ $("#chips").innerHTML=[["deal","🔥 Big Deals 50%+"],["wl","❤️ Wishlist"]].
 $("#pf").innerHTML=["Under ₹200","₹200 – ₹399","₹400 – ₹699","₹700 & above"].map((t,i)=>`<label><input type="checkbox" ${rg.has(i)?'checked':''} onchange="this.checked?rg.add(${i}):rg.delete(${i});draw()"> ${t}</label>`).join("")}
 function reset(){cat="all";tag.clear();rg.clear();$("#q").value="";ui();draw()}
 function tw(i){wl.has(i)?wl.delete(i):wl.add(i);draw()}
-function add(i){const p=PB(i);if((cart[i]||0)>=p.st){alert("Sorry, only "+p.st+" pieces of this product are available.");return}cart[i]=(cart[i]||0)+1;rc();$("#cart").classList.add("o")}
+function add(i){const p=PB(i)if(!p||p.st<=0)return;;if((cart[i]||0)>=p.st){alert("Sorry, only "+p.st+" pieces of this product are available.");return}cart[i]=(cart[i]||0)+1;
+if(typeof fbq==="function"){
+fbq('track','AddToCart',{
+content_ids:[String(i)],
+content_type:'product',
+content_name:p.n,
+value:Number(p.pr||0),
+currency:'INR'
+});
+}
+rc();$("#cart").classList.add("o")}
 function ch(i,d){if(d>0&&cart[i]>=PB(i).st){alert("Sorry, only "+PB(i).st+" pieces of this product are available.");return}cart[i]+=d;if(cart[i]<1)delete cart[i];rc()}
 function rc(){let t=0,n=0;$("#items").innerHTML=Object.keys(cart).map(i=>{const p=PB(i);t+=p.pr*cart[i];n+=cart[i];return`<div class="ci"><span>${p.n}<br><b>₹${p.pr}</b></span><span><button onclick="ch(${i},-1)">−</button> ${cart[i]} <button onclick="ch(${i},1)">+</button></span></div>`}).join("")||"<p style='color:var(--mu);margin-top:20px'>Your cart is empty.</p>";$("#tot").textContent=t;$("#cc").textContent=n}
 function tc(){$("#cart").classList.toggle("o")}
