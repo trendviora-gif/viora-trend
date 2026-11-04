@@ -223,7 +223,7 @@ if(!np.length)return;const sg=JSON.stringify(np.map(p=>[p.id,p.n,p.k,p.pr,p.mrp,
 P.length=0;np.forEach(p=>P.push(p));rebuild()}catch(e){}}
 async function place(){const b=$("#pob");b.disabled=true;b.textContent="Placing order…";await loadStock();const bad=Object.keys(cart).find(i=>cart[i]>PB(i).st);if(bad){b.disabled=false;b.textContent="Place Order";alert("Sorry, "+PB(bad).n+" has only "+PB(bad).st+" left. Please reduce the quantity in your cart.");ckC();rc();$("#cart").classList.add("o");return}
 const id="VT"+Date.now().toString(36).toUpperCase();
-const o={id,createdAt:new Date().toISOString(),customer:addr,payment:"Cash on Delivery",items:Object.keys(cart).map(i=>({id:+i,name:PB(i).n,qty:cart[i],price:PB(i).pr})),total:tot(),status:"New"};
+const o={id,createdAt:new Date().toISOString(),customer:addr,payment:"Cash on Delivery",items:Object.keys(cart).map(i=>{const im=PB(i).img||"";return{id:+i,name:PB(i).n,qty:cart[i],price:PB(i).pr,img:/^data:/.test(im)?"":im}}),total:tot(),status:"New"};
 const snap=snapItems(o.items);let saved=false;if(ORDER_ENDPOINT){try{await fetch(ORDER_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)});saved=true}catch(e){}}
 if(saved)await loadStock();last={o,saved,snap};saveOrder(o,saved,snap);if(saved)try{fbq("track","Purchase",{value:o.total,currency:"INR",content_type:"product",content_ids:o.items.map(x=>String(x.id)),num_items:o.items.reduce((a,x)=>a+x.qty,0)},{eventID:o.id})}catch(e){}cart={};rc();ckS=3;ckR()}
 loadStock();setInterval(loadStock,60000);
